@@ -4,7 +4,7 @@ parameters:
     level: 8
 services:
     errorFormatter.sarif:
-        class: App\PHPStan\SarifErrorFormatter
+        class: PHPStanSarifErrorFormatter\SarifErrorFormatter
         arguments:
             relativePathHelper: @simpleRelativePathHelper
             currentWorkingDirectory: %currentWorkingDirectory%
