@@ -40,6 +40,7 @@ jobs:
           wait-for-processing: true
 
   package:
+    name: Package ${{ matrix.version }} (${{ matrix.php-version }})
     runs-on: ubuntu-latest
     permissions:
       contents: read # for checkout to fetch code
@@ -49,6 +50,7 @@ jobs:
       fail-fast: false
       matrix:
         php-version: ['8.1', '8.2']
+        version: ['dev-master']
     steps:
       - uses: actions/checkout@v3
       - name: Use PHP ${{ matrix.php-version }}
@@ -56,7 +58,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
       - name: Install PHPStan SARIF Formatter
-        run: composer require --dev --prefer-dist --no-progress phpstan/phpstan jbelien/phpstan-sarif-formatter:dev-master
+        run: composer require --dev --prefer-dist --no-progress phpstan/phpstan jbelien/phpstan-sarif-formatter:${{ matrix.version }}
       - name: Run PHPStan
         continue-on-error: true
         run: vendor/bin/phpstan analyze --configuration=tests/phpstan.neon --error-format=sarif "tests/" > local-results.sarif
