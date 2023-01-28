@@ -1,0 +1,11 @@
+parameters:
+    fileExtensions:
+        - php
+    level: 8
+services:
+    errorFormatter.sarif:
+        class: App\PHPStan\SarifErrorFormatter
+        arguments:
+            relativePathHelper: @simpleRelativePathHelper
+            currentWorkingDirectory: %currentWorkingDirectory%
+            pretty: true
