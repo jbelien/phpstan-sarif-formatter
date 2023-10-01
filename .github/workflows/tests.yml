@@ -22,7 +22,7 @@ jobs:
       matrix:
         php-version: ['8.1', '8.2']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use PHP ${{ matrix.php-version }}
         uses: shivammathur/setup-php@v2
         with:
@@ -57,7 +57,7 @@ jobs:
         php-version: ['8.1', '8.2']
         version: ['dev-master', '1.0']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use PHP ${{ matrix.php-version }}
         uses: shivammathur/setup-php@v2
         with:
