@@ -2,9 +2,9 @@ name: Test
 
 on:
   push:
-    branches: ["master"]
+    branches: [ "master" ]
   pull_request:
-    branches: ["master"]
+    branches: [ "master" ]
 
 permissions:
   contents: read
@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ["7.4", "8.1", "8.2"]
+        php-version: ['7.4', '8.1', '8.2']
     steps:
       - uses: actions/checkout@v4
       - name: Use PHP ${{ matrix.php-version }}
@@ -54,8 +54,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ["7.4", "8.1", "8.2"]
-        version: ["dev-master", "1.0"]
+        php-version: ['7.4', '8.1', '8.2']
+        version: ['dev-master', '1.0']
     steps:
       - uses: actions/checkout@v4
       - name: Use PHP ${{ matrix.php-version }}
