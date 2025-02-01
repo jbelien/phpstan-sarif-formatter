@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  local:
+  local-phpstant-1x:
     name: Local (${{ matrix.php-version }})
     runs-on: ubuntu-latest
     permissions:
@@ -20,7 +20,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.2']
+        php-version: [8.1, 8.2, 8.3, 8.4]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+      - name: Install dependencies
+        run: composer install --prefer-lowest --no-progress
+      - name: Run PHPStan
+        continue-on-error: true
+        run: vendor/bin/phpstan analyze --configuration=tests/phpstan.neon --error-format=sarif --xdebug "tests/" > local-results.sarif
+      - uses: actions/upload-artifact@v4
+        with:
+          name: local-${{ matrix.php-version }}
+          path: local-results.sarif
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: local-results.sarif
+          wait-for-processing: true
+  local-phpstant-2x:
+    name: Local (${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # for checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [8.1, 8.2, 8.3, 8.4]
     steps:
       - uses: actions/checkout@v4
       - name: Use PHP ${{ matrix.php-version }}
@@ -54,8 +87,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.2']
-        version: ['dev-master', '1.0']
+        php-version: [8.1, 8.2, 8.3, 8.4]
+        version: ['dev-master', 1.0, 1.1]
     steps:
       - uses: actions/checkout@v4
       - name: Use PHP ${{ matrix.php-version }}
