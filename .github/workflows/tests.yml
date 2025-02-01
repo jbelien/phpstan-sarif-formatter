@@ -30,7 +30,7 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
       - name: Install dependencies
-        run: composer install --prefer-lowest --no-progress
+        run: composer update --prefer-lowest --no-progress
       - name: Run PHPStan
         continue-on-error: true
         run: vendor/bin/phpstan analyze --configuration=tests/phpstan.neon --error-format=sarif --xdebug "tests/" > local-results.sarif
@@ -63,7 +63,7 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
+        run: composer update --prefer-dist --no-progress
       - name: Run PHPStan
         continue-on-error: true
         run: vendor/bin/phpstan analyze --configuration=tests/phpstan.neon --error-format=sarif --xdebug "tests/" > local-results.sarif
