@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   local-phpstant-1x:
-    name: Local (${{ matrix.php-version }})
+    name: Local PHPStan 1.x (${{ matrix.php-version }})
     runs-on: ubuntu-latest
     permissions:
       contents: read # for checkout to fetch code
@@ -44,7 +44,7 @@ jobs:
           sarif_file: local-results.sarif
           wait-for-processing: true
   local-phpstant-2x:
-    name: Local (${{ matrix.php-version }})
+    name: Local PHPStan 2.x (${{ matrix.php-version }})
     runs-on: ubuntu-latest
     permissions:
       contents: read # for checkout to fetch code
