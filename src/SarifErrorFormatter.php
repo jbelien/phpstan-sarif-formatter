@@ -27,6 +27,8 @@ class SarifErrorFormatter implements ErrorFormatter
   {
     $phpstanVersion = ComposerHelper::getPhpStanVersion();
 
+    $rules = [];
+
     $tool = [
       'driver' => [
         'name' => 'PHPStan',
@@ -34,7 +36,7 @@ class SarifErrorFormatter implements ErrorFormatter
         'informationUri' => 'https://phpstan.org',
         'version' => $phpstanVersion,
         'semanticVersion' => $phpstanVersion,
-        'rules' => [],
+        'rules' => $rules,
       ],
     ];
 
@@ -48,7 +50,7 @@ class SarifErrorFormatter implements ErrorFormatter
 
     foreach ($analysisResult->getFileSpecificErrors() as $fileSpecificError) {
       $result = [
-        'level' => 'error',
+        'level' => $fileSpecificError->canBeIgnored() ? 'warning' : 'error',
         'message' => [
           'text' => $fileSpecificError->getMessage(),
         ],
@@ -67,10 +69,24 @@ class SarifErrorFormatter implements ErrorFormatter
         ],
         'properties' => [
           'ignorable' => $fileSpecificError->canBeIgnored(),
-          // 'identifier' => $fileSpecificError->getIdentifier(),
-          // 'metadata' => $fileSpecificError->getMetadata(),
         ],
       ];
+
+      if ($fileSpecificError->getIdentifier() !== null) {
+        $result['ruleId'] = $fileSpecificError->getIdentifier();
+
+        $ruleID = $fileSpecificError->getIdentifier();
+        $rules[$ruleID] = [
+          'id' => $ruleID,
+          'shortDescription' => [
+            'text' => $fileSpecificError->getMessage()
+          ],
+        ];
+
+        if ($fileSpecificError->getTip() !== null) {
+          $rules[$ruleID]['help']['text'] = $fileSpecificError->getTip();
+        }
+      }
 
       if ($fileSpecificError->getTip() !== null) {
         $result['properties']['tip'] = $fileSpecificError->getTip();
@@ -96,6 +112,8 @@ class SarifErrorFormatter implements ErrorFormatter
         ],
       ];
     }
+
+    $tool['driver']['rules'] = array_values($rules);
 
     $sarif = [
       '$schema' => 'https://json.schemastore.org/sarif-2.1.0.json',
